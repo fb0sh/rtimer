@@ -2,6 +2,12 @@
 name = "rtimer"
 version = "0.2.0"
 edition = "2021"
+license = "MIT"
+description = "A tool for timer, a tip? or a cmd."
+homepage = "https://github.com/freetbash/rtimer"
+repository = "https://github.com/freetbash/rtimer"
+documentation = "https://github.com/freetbash/rtimer"
+readme = "README.md"
 authors = ["freet-bash@qq.com"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
