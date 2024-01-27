@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local, Timelike};
+use chrono::{Local, Timelike};
 
 use clap::Parser;
 use regex::{Captures, Regex};
