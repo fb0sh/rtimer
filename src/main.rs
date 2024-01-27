@@ -1,5 +1,4 @@
 use chrono::{Local, Timelike};
-
 use clap::Parser;
 use regex::{Captures, Regex};
 use rodio::{OutputStream, Sink};
@@ -12,6 +11,9 @@ use std::{process, time::Duration};
 struct Cli {
     ///!1h:1m:30s  !12h:1m:30s  !1h:1m  !1m:30s  !1h:30s  !1h  !2m  !3s  @12:33
     pattern: Option<String>,
+    /// till the end, execute a system script or command
+    #[arg(short, long)]
+    cmd: Option<String>,
 }
 
 fn main() {
@@ -19,7 +21,7 @@ fn main() {
     cli.pattern
         .as_deref()
         .map(|pattern| select_pattern(pattern))
-        .map(|dur| start_timer(dur));
+        .map(|dur| start_timer(dur, cli.cmd));
 }
 
 fn select_pattern(pattern: &str) -> Duration {
@@ -77,14 +79,29 @@ fn handle_p2(data: Captures<'_>) -> Duration {
     }
 }
 
-fn start_timer(secs: Duration) {
+fn start_timer(secs: Duration, cmd: Option<String>) {
     println!("secs:={}s", &secs.as_secs());
-
     sleep(secs);
+    match cmd {
+        Some(c) => exec_shell(c),
+        None => play_sound(),
+    }
+}
+
+fn play_sound() {
     let (_stream, stream_handle) = OutputStream::try_default().unwrap();
     let sink = Sink::try_new(&stream_handle).unwrap();
     let file = File::open("tip.mp3").unwrap();
     let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
     sink.append(source);
     sink.sleep_until_end();
+}
+
+fn exec_shell(cmd: String) {
+    match subprocess::Exec::shell(cmd).capture() {
+        Ok(res) => {
+            print!("{}", res.stdout_str());
+        }
+        Err(e) => eprintln!("Err: {}", e),
+    }
 }
