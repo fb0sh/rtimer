@@ -80,10 +80,10 @@ fn handle_p2(data: Captures<'_>) -> Duration {
 fn start_timer(secs: Duration, cmd: Option<String>) {
     println!("secs:={}s", &secs.as_secs());
     sleep(secs);
-    match cmd {
-        Some(c) => exec_shell(c),
-        None => play_sound(),
-    }
+    cmd.map(|c| exec_shell(c));
+    play_sound();
+    play_sound();
+    play_sound();
 }
 
 fn play_sound() {
