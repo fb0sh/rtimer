@@ -66,10 +66,22 @@ fn handle_p2(data: Captures<'_>) -> Duration {
     let m = *&data[2].parse::<i32>().unwrap();
     let nh = now.hour() as i32;
     let nm = now.minute() as i32;
+    let ns = now.second() as i32;
+    /*
+    15:00:32
+    15:30:00
+    29:28
+
+    */
     if h >= nh && m >= nm {
+        let ss = 60 - ns;
+        let ms = if ss > 0 {
+            (m - nm - 1) * 60
+        } else {
+            (m - nm) * 60
+        };
         let hs = (h - nh) * 60 * 60;
-        let ms = (m - nm) * 60;
-        let total = (hs + ms) as u64;
+        let total = (hs + ms + ss) as u64;
         Duration::from_secs(total)
     } else {
         eprintln!("Check your time");
